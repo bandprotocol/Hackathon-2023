@@ -4,7 +4,7 @@ import requests
 
 
 def main(word):
-    return requests.get("https://run.mocky.io/v3/c0354a03-3c3f-437f-9737-0bb8a1a8e5b0").text + " " + word
+    return requests.get("https://raw.githubusercontent.com/bandprotocol/Hackathon-2023/main/text/hello.text").text.strip() + " " + word
 
 
 if __name__ == "__main__":
