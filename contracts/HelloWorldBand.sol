@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
 interface IFutureBridge {
-	struct Result {
+    struct Result {
         string clientID;
         uint64 oracleScriptID;
         bytes params;
@@ -19,32 +19,33 @@ interface IFutureBridge {
 }
 
 contract HelloWorldBand {
-	struct Result {
-		string text;
-	}
+    struct Result {
+        string text;
+    }
 
-	uint64 public constant ansCount = 1;
-	uint64 public constant oracleScriptID = 3;
-	IFutureBridge public bridge;
-	string public text;
+    IFutureBridge public bridge;
+    uint64 public constant ansCount = 1;
+    uint64 public oracleScriptID;
+    string public text;
 
-	constructor(IFutureBridge _bridge) {
-		bridge = _bridge;
-	}
+    constructor(IFutureBridge _bridge, uint64 _oracleScriptID) {
+        bridge = _bridge;
+        oracleScriptID = _oracleScriptID;
+    }
 
-	function setText(address rAddress, uint256 s, bytes memory data) external {
-		require(
-			bridge.verify(rAddress, s, keccak256(abi.encodePacked(uint8(2), data))),
-			"feedPrices: Verification fail"
-		);
+    function setText(address rAddress, uint256 signature, bytes memory message) external {
+        require(
+            bridge.verify(rAddress, signature, keccak256(abi.encodePacked(uint8(2), message))),
+            "feedPrices: Verification fail"
+        );
 
-		IFutureBridge.Result memory r = abi.decode(data, (IFutureBridge.Result));
+        IFutureBridge.Result memory r = abi.decode(message, (IFutureBridge.Result));
 
-		require(r.resolveStatus == 1,"feedPrices: Request not successfully resolved");
-		require(r.oracleScriptID == oracleScriptID, "feedPrices: Oracle Script ID not match");
-		require(r.ansCount >= ansCount, "feedPrices: Ask Count not >=");
+        require(r.resolveStatus == 1,"feedPrices: Request not successfully resolved");
+        require(r.oracleScriptID == oracleScriptID, "feedPrices: Oracle Script ID not match");
+        require(r.ansCount >= ansCount, "feedPrices: Ask Count too low");
 
-		Result memory result = abi.decode(r.result, (Result));
-        	text = result.text;
-	}
+        Result memory result = abi.decode(r.result, (Result));
+        text = result.text;
+    }
 }
