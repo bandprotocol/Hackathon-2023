@@ -9,7 +9,7 @@ struct Output { result: String }
 
 fn prepare_impl(input: Input) {
     if input.word.is_empty() { panic!("Error: word is empty"); }
-    oei::ask_external_data(1, xx, input.word.as_bytes());
+    oei::ask_external_data(1, xx, input.word.as_bytes()); // replace xx with Data Source ID
 }
 
 fn execute_impl(_: Input) -> Output {
